@@ -7,7 +7,6 @@ import tempfile
 from pathlib import Path
 
 import streamlit as st
-from openai import OpenAI
 
 import config
 from src.extractor import split_document
@@ -41,14 +40,15 @@ st.caption("ระบบตรวจสอบการอ้างอิงต�
 st.divider()
 
 # ===== ตรวจสอบ API keys =====
-api_key = config.get_openai_key()
+llm_provider = config.get_llm_provider()
+llm_key = config.get_llm_key()
 llama_key = config.get_llama_key()
 brave_key = config.get_brave_key()
 
-if not api_key:
+if not llm_key:
     st.error(
-        "⚠️ ไม่พบ OpenAI API Key กรุณาให้ Admin ตั้งค่าไฟล์ .env "
-        "โดยเพิ่ม OPENAI_API_KEY=sk-xxxxx"
+        "⚠️ ไม่พบ API Key สำหรับโมเดลภาษา กรุณาให้ Admin ตั้งค่าไฟล์ .env "
+        + ("โดยเพิ่ม OPENROUTER_API_KEY=... หรือเปลี่ยน LLM_PROVIDER=openai" if llm_provider == "openrouter" else "โดยเพิ่ม OPENAI_API_KEY=...")
     )
     st.stop()
 
@@ -59,7 +59,7 @@ if not llama_key:
         "(สมัครฟรีได้ที่ https://cloud.llamaindex.ai)"
     )
 
-client = OpenAI(api_key=api_key)
+client = config.create_llm_client()
 checklist_path = config.get_checklist_path()
 model = config.get_model()
 report_writer_model = config.get_report_writer_model()
@@ -75,7 +75,9 @@ uploaded_file = st.file_uploader(
 
 # ===== Options =====
 with st.expander("⚙️ ตั้งค่าเพิ่มเติม (สำหรับผู้พัฒนา)", expanded=False):
-    show_model = st.text_input("OpenAI Model", value=model, disabled=True)
+    st.text_input("LLM Provider", value=llm_provider, disabled=True)
+    show_model = st.text_input("Checker Model", value=model, disabled=True)
+    st.text_input("Report Writer Model", value=report_writer_model, disabled=True)
     show_checklist = st.text_area(
         "เนื้อหา Checklist ที่ใช้",
         value=checklist_path.read_text(encoding="utf-8") if checklist_path.exists() else "ไม่พบ checklist",

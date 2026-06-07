@@ -22,6 +22,7 @@
 - Crossref: ใช้ยืนยัน metadata จาก DOI โดยตรง
 - OpenAlex: ใช้หา possible match จากชื่อเรื่องเฉพาะกรณีไม่มี DOI
 - OpenAI API: ใช้กับ Streamlit app และการเกลาภาษารายงาน ไม่ใช้เป็นแหล่งยืนยันข้อมูลบรรณานุกรม
+- OpenRouter API: ใช้เป็นทางเลือกแทน OpenAI API สำหรับเรียก LLM model ที่กำหนดใน `.env`
 - LlamaCloud: ใช้เฉพาะกรณีอัปโหลด PDF
 
 ## ความต้องการของระบบ
@@ -29,7 +30,7 @@
 - Python 3.11 หรือ 3.12
 - Git
 - Internet connection สำหรับติดตั้ง dependency และตรวจ metadata จาก Crossref/OpenAlex
-- OpenAI API key สำหรับใช้งานผ่าน Streamlit app
+- OpenAI API key หรือ OpenRouter API key สำหรับใช้งานผ่าน Streamlit app
 
 แนะนำให้ใช้ไฟล์ `.docx` เป็นหลัก เพราะตรวจตำแหน่งและรูปแบบตัวเอียงได้ดีกว่า PDF
 
@@ -90,7 +91,17 @@ python scripts/check_install.py
 จากนั้นเปิดไฟล์ `.env` แล้วใส่ค่าอย่างน้อย:
 
 ```env
+LLM_PROVIDER=openai
 OPENAI_API_KEY=your_openai_api_key
+```
+
+ถ้าต้องการใช้ OpenRouter แทน OpenAI ให้ตั้งค่าแบบนี้:
+
+```env
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=openai/gpt-5.1
+OPENROUTER_REPORT_WRITER_MODEL=openai/gpt-5.1
 ```
 
 ถ้าต้องการตรวจ PDF ให้ใส่เพิ่ม:
@@ -118,7 +129,17 @@ python scripts/check_install.py
 จากนั้นเปิดไฟล์ `.env` แล้วใส่ค่าอย่างน้อย:
 
 ```env
+LLM_PROVIDER=openai
 OPENAI_API_KEY=your_openai_api_key
+```
+
+ถ้าต้องการใช้ OpenRouter แทน OpenAI ให้ตั้งค่าแบบนี้:
+
+```env
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=openai/gpt-5.1
+OPENROUTER_REPORT_WRITER_MODEL=openai/gpt-5.1
 ```
 
 ถ้า PowerShell ไม่ยอม activate virtual environment ให้รัน:
@@ -188,7 +209,12 @@ python -m unittest
 ค่าหลักอยู่ใน `.env`
 
 ```env
+LLM_PROVIDER=openai
 OPENAI_API_KEY=
+OPENROUTER_API_KEY=
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_MODEL=openai/gpt-5.1
+OPENROUTER_REPORT_WRITER_MODEL=openai/gpt-5.1
 LLAMA_CLOUD_API_KEY=
 BRAVE_SEARCH_API_KEY=
 OPENAI_MODEL=gpt-5.4-mini
@@ -198,6 +224,8 @@ OUTPUT_DIR=outputs
 ```
 
 อย่า commit ไฟล์ `.env` ขึ้น GitHub
+
+การเลือก `LLM_PROVIDER=openrouter` เป็นเพียงการเปลี่ยน provider/model ที่ใช้เรียก LLM เท่านั้น ไม่ได้เปลี่ยนบทบาทของระบบตรวจ APA และไม่ได้ใช้ LLM เป็นแหล่งยืนยันข้อมูลบรรณานุกรม
 
 ## ข้อควรระวังเรื่องข้อมูลผู้เขียน
 

@@ -31,6 +31,44 @@
 
 แนะนำให้ใช้ไฟล์ `.docx` เป็นหลัก เพราะตรวจตำแหน่งและรูปแบบตัวเอียงได้ดีกว่า PDF
 
+## ติดตั้งครั้งแรก: เตรียม Python และ Git
+
+โปรเจกต์นี้ไม่ได้ติดตั้ง Python หรือ Git ให้อัตโนมัติ ผู้ใช้ต้องติดตั้ง 2 อย่างนี้ในเครื่องก่อน แล้วจึงค่อย `git clone` โปรเจกต์
+
+### Windows
+
+1. ติดตั้ง Python 3.11 หรือ 3.12 จาก <https://www.python.org/downloads/>
+2. ตอนติดตั้ง Python ให้ติ๊ก `Add python.exe to PATH`
+3. ติดตั้ง Git จาก <https://git-scm.com/download/win>
+4. เปิด PowerShell แล้วตรวจว่าใช้งานได้:
+
+```powershell
+py --version
+git --version
+```
+
+ถ้าเห็นเลข version ทั้งสองคำสั่ง แปลว่าพร้อมติดตั้งโปรเจกต์
+
+### macOS
+
+1. ติดตั้ง Python 3.11 หรือ 3.12 จาก <https://www.python.org/downloads/macos/>
+2. ติดตั้ง Git หากเครื่องยังไม่มี
+
+ตรวจว่าใช้งานได้:
+
+```bash
+python3 --version
+git --version
+```
+
+ถ้า macOS แจ้งให้ติดตั้ง Xcode Command Line Tools ตอนรัน `git --version` ให้กดติดตั้งตามที่ระบบแจ้ง แล้วรันคำสั่งเช็กอีกครั้ง
+
+### หมายเหตุ
+
+- Python/Git เป็นโปรแกรมส่วนกลางของเครื่อง ไม่ได้อยู่ในโฟลเดอร์โปรเจกต์
+- เมื่อลบ `kruroo_apa_checker` จะลบเฉพาะระบบ APA checker และ dependency ใน `.venv`
+- การลบโฟลเดอร์โปรเจกต์จะไม่ลบ Python หรือ Git ออกจากเครื่อง
+
 ## ติดตั้งบน macOS
 
 ```bash

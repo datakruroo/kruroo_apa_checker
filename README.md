@@ -1,3 +1,5 @@
+<img width="300" height="115" alt="image" src="https://github.com/user-attachments/assets/dde9353f-a203-46db-b615-582abf616a0d" />
+
 # kruroo_apa_checker
 
 ระบบช่วยตรวจรายการอ้างอิงและการอ้างอิงในเนื้อหาตาม APA 7 สำหรับงานบรรณาธิการเบื้องต้น

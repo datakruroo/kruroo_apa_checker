@@ -1,0 +1,110 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "v*"   # trigger เมื่อ push tag เช่น v1.0.0
+
+jobs:
+  # ===== Build Windows .exe =====
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build Windows executable
+        run: |
+          pyinstaller --onefile --noconsole `
+            --add-data "checklists;checklists" `
+            --add-data "src;src" `
+            --name "APA-Checker" `
+            run_app.py
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: APA-Checker-Windows
+          path: dist/APA-Checker.exe
+
+  # ===== Build macOS .app =====
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build macOS app
+        run: |
+          pyinstaller --onefile --noconsole \
+            --add-data "checklists:checklists" \
+            --add-data "src:src" \
+            --name "APA-Checker" \
+            run_app.py
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: APA-Checker-macOS
+          path: dist/APA-Checker
+
+  # ===== Create GitHub Release =====
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Windows build
+        uses: actions/download-artifact@v4
+        with:
+          name: APA-Checker-Windows
+          path: ./release/windows
+
+      - name: Download macOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: APA-Checker-macOS
+          path: ./release/macos
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/windows/APA-Checker.exe
+            release/macos/APA-Checker
+          body: |
+            ## การติดตั้ง
+
+            ### Windows
+            1. ดาวน์โหลด `APA-Checker.exe`
+            2. วางไฟล์ `.env` (ที่ Admin จัดเตรียมไว้) ในโฟลเดอร์เดียวกัน
+            3. ดับเบิลคลิก `APA-Checker.exe`
+
+            ### macOS
+            1. ดาวน์โหลด `APA-Checker`
+            2. วางไฟล์ `.env` ในโฟลเดอร์เดียวกัน
+            3. เปิด Terminal แล้วรัน: `chmod +x APA-Checker && ./APA-Checker`
+
+            ### ไฟล์ .env (Admin จัดเตรียม)
+            ```
+            OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
+            ```
